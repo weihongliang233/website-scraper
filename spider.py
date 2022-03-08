@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import os
 import urllib
 #BASE_URL和BASE_DIR末尾一定是斜杠
-BASE_URL = "https://docs.scrapy.org/en/latest/"
+BASE_URL = "https://www.haskell.org/"
 BASE_DIR = "E:\Temp\practice_scrapy\\tutorial\src\store\\"
 html_history = set()
 static_history = set()
@@ -89,9 +89,9 @@ join_url_current_relative("https://docs.scrapy.org/en/latest/intro/overview.html
 #join file path
 def join_file_path_html(absolute_url)->str:
     print("Joining html file path: " + absolute_url)
-    relavitve_filename = absolute_url[len(BASE_URL):]
+    relavitve_filename:str = absolute_url[len(BASE_URL):]
     if relavitve_filename:
-        if relavitve_filename.endswith('.html'):
+        if relavitve_filename.endswith(tuple(['.html','.htm'])):
             pass
         else:
             relavitve_filename = add_slash(relavitve_filename) + 'index.html'
@@ -100,36 +100,26 @@ def join_file_path_html(absolute_url)->str:
     else:
         relavitve_filename = "index.html"
     return os.path.join(BASE_DIR, relavitve_filename)
-#join_file_path_html("https://docs.scrapy.org/en/latest/")
-#join_file_path_html("https://docs.scrapy.org/en/latest/topics/")
-#join_file_path_html("https://docs.scrapy.org/en/latest/topics.html")
-join_file_path_html("https://docs.scrapy.org/en/latest/topics")
 
 
 
-def join_file_path_static(url)->str:
-    #print("Joining static file path: " + url)
-    #url = add_slash(url)
-
-    relavitve_filename = url[len(BASE_URL):]
-    '''
+def join_file_path_static(absolute_url)->str:
+    print("Joining html file path: " + absolute_url)
+    relavitve_filename:str = absolute_url[len(BASE_URL):]
     if relavitve_filename:
-        #if url has filename extension
-        lastname = relavitve_filename.split("/")[-2]
-        if "." in lastname:
+        if relavitve_filename.endswith(tuple(['.js','.css','.png','.jpg','.jpeg','.gif','.svg'])):
             pass
         else:
-            raise Exception("No file extension")
+            relavitve_filename = add_slash(relavitve_filename) + 'index.html'
+    
     #此时传入的absolute_url就是BASE_DIR
     else:
-        raise Exception("static file path should not be empty")
-    '''
-    final =  os.path.join(BASE_DIR, relavitve_filename)
-    return final
-
+        relavitve_filename = "index.html"
+    return os.path.join(BASE_DIR, relavitve_filename)
 #join_file_path_static("https://docs.scrapy.org/en/latest/")
 #join_file_path_static("https://docs.scrapy.org/en/latest/topics/")
-join_file_path_static("https://docs.scrapy.org/en/latest/topics/min.js")
+#join_file_path_static("https://docs.scrapy.org/en/latest/topics/min.js")
+
 def write_file(doc, filename):
     if not os.path.exists(os.path.dirname(filename)):
         os.makedirs(os.path.dirname(filename))
@@ -178,7 +168,7 @@ def filter_html_links(links: list[str]):
 
 def filter_static_links(links:list[str]):
     #if link is not start with http, not start with irc
-    return [link for link in links if link and not "#" in link and  not link.startswith("http") and not link.startswith("irc") and not "?" in link]
+    return [link for link in links if link and not "#" in link and  not link.startswith("http") and not link.startswith("irc") and not "?" in link and not link.endswith(".js")]
 
 def process_link(url,html_doc):
     print("Processing link: {}"+url)
